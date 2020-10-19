@@ -20,7 +20,7 @@
 import '../../list_treeview.dart';
 import '../tree_define.dart';
 
-class TreeNode<T> {
+class TreeNode {
   TreeNode({this.lazyItem, this.expandCallback});
 
   bool _expanded = false;
@@ -51,7 +51,7 @@ class TreeNode<T> {
 class TreeNodeItem {
   TreeNodeItem({this.parent, this.index, this.controller});
 
-  final dynamic parent;
+  final NodeData parent;
   final int index;
   final TreeViewController controller;
   NodeData _item;
@@ -65,8 +65,9 @@ class TreeNodeItem {
 }
 
 ///This class contains information about the nodes, such as Index and level, and whether to expand. It also contains other information
-class NodeData {
-  NodeData() : children = [];
+abstract class NodeData {
+  NodeData({List<NodeData> children}) : this.children = children ?? const <NodeData>[];
+
   List<NodeData> children;
   bool isSelected = false;
 
@@ -78,7 +79,11 @@ class NodeData {
   int level = -1;
   bool isExpand = false;
 
-  addChild(NodeData child) {
+  void addChild(NodeData child) {
     children.add(child);
+  }
+
+  void addChildren(List<NodeData> child) {
+    children.addAll(child);
   }
 }

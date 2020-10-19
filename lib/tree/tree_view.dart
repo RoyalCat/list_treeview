@@ -17,7 +17,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'controller/tree_controller.dart';
@@ -62,27 +61,21 @@ class ListTreeView extends StatefulWidget {
   final bool toggleNodeOnTap;
 
   @override
-  State<StatefulWidget> createState() {
-    return _ListTreeViewState();
-  }
+  State<ListTreeView> createState() => _ListTreeViewState();
 }
 
 class _ListTreeViewState extends State<ListTreeView> {
   @override
   void initState() {
-    super.initState();
     widget.controller.addListener(updateView);
+    super.initState();
   }
 
   /// update view
-  void updateView() {
-    setState(() => {});
-  }
+  void updateView() => setState(() {});
 
   /// expand or collapse children
-  void itemClick(int index) {
-    widget.controller.expandOrCollapse(index);
-  }
+  void itemClick(int index) => widget.controller.expandOrCollapse(index);
 
   @override
   Widget build(BuildContext context) {
@@ -107,18 +100,15 @@ class _ListTreeViewState extends State<ListTreeView> {
             itemBuilder: (BuildContext context, int index) {
 //        int num = widget.controller.numberOfVisibleChild();
               ///The [TreeNode] associated with the current item
-              TreeNode treeNode = widget.controller.treeNodeOfIndex(index);
+              final TreeNode treeNode = widget.controller.treeNodeOfIndex(index);
 
               ///The level of the current item
-              treeNode.item.level =
-                  widget.controller.levelOfNode(treeNode.item);
-              treeNode.item.isExpand =
-                  widget.controller.isExpanded(treeNode.item);
+              treeNode.item.level = widget.controller.levelOfNode(treeNode.item);
+              treeNode.item.isExpand = widget.controller.isExpanded(treeNode.item);
               treeNode.item.index = index;
-              NodeData parent = widget.controller.parentOfItem(treeNode.item);
+              final NodeData parent = widget.controller.parentOfItem(treeNode.item);
               if (parent != null && parent.children.length > 0) {
-                treeNode.item.indexInParent =
-                    parent.children.indexOf(treeNode.item);
+                treeNode.item.indexInParent = parent.children.indexOf(treeNode.item);
               } else {
                 treeNode.item.indexInParent = 0;
               }

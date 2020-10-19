@@ -22,7 +22,7 @@ import '../node/tree_node.dart';
 
 ///
 class NodeController {
-  static final min = -1;
+  static const min = -1;
 
   NodeController({this.parent, this.nodeItem, this.expandCallback})
       : treeNode = TreeNode(lazyItem: nodeItem, expandCallback: expandCallback),
@@ -53,18 +53,18 @@ class NodeController {
   }
 
   /// Gets the index associated with the data
-  int indexOfItem(dynamic item) {
-    var controller = controllerOfItem(item);
+  int indexOfItem(NodeData item) {
+    final controller = controllerOfItem(item);
     return (controller != null) ? controller.index : min;
   }
 
   /// Gets the controller associated with the data
-  NodeController controllerOfItem(dynamic item) {
+  NodeController controllerOfItem(NodeData item) {
     if (item == treeNode.item) {
       return this;
     }
-    for (NodeController controller in childControllers) {
-      var result = controller.controllerOfItem(item);
+    for (final NodeController controller in childControllers) {
+      final result = controller.controllerOfItem(item);
       if (result != null) {
         return result;
       }
@@ -81,8 +81,7 @@ class NodeController {
     resetNodesAfterChildAtIndex(min);
   }
 
-  void insertChildControllers(
-      List<NodeController> controllers, List<int> indexes) {
+  void insertChildControllers(List<NodeController> controllers, List<int> indexes) {
     if (controllers == null || controllers.length == 0) {
       return;
     }
@@ -113,7 +112,7 @@ class NodeController {
     resetNodesAfterChildAtIndex(-1);
   }
 
-  void removeChildControllersForParent(dynamic parent, int index) {}
+  void removeChildControllersForParent(NodeData parent, int index) {}
 
   void resetNodesAfterChildAtIndex(int index) {
     int selfIndex;
@@ -135,7 +134,7 @@ class NodeController {
     }
 
     for (int i = index + 1; i < childControllers.length; i++) {
-      NodeController controller = childControllers[i];
+      final NodeController controller = childControllers[i];
       controller.resetData();
       controller.resetChildNodesAfterChildAtIndex(-1);
     }
@@ -144,7 +143,7 @@ class NodeController {
   /// Collapsing and expanding
 
   void expandAndExpandChildren(bool expandChildren) {
-    for (NodeController controller in childControllers) {
+    for (final NodeController controller in childControllers) {
       controller.resetData();
     }
 
@@ -152,7 +151,7 @@ class NodeController {
     resetData();
 
     /// Recursively expand all child nodes
-    for (NodeController controller in childControllers) {
+    for (final NodeController controller in childControllers) {
       if (controller.treeNode.expanded || expandChildren) {
         controller.expandAndExpandChildren(expandChildren);
       }
@@ -168,7 +167,7 @@ class NodeController {
 
     ///collapse children
     if (collapseChildren) {
-      for (NodeController controller in childControllers) {
+      for (final NodeController controller in childControllers) {
         controller.collapseAndCollapseChildren(collapseChildren);
       }
     }
@@ -197,8 +196,8 @@ class NodeController {
     if (!treeNode.expanded) {
       return null;
     }
-    for (NodeController controller in childControllers) {
-      var result = controller.controllerForIndex(index);
+    for (final NodeController controller in childControllers) {
+      final result = controller.controllerForIndex(index);
       if (result != null) {
         return result;
       }
@@ -215,9 +214,9 @@ class NodeController {
     } else if (!parent.treeNode.expanded) {
       _index = -1;
     } else {
-      var indexOf = parent.childControllers.indexOf(this);
+      final indexOf = parent.childControllers.indexOf(this);
       if (indexOf != 0) {
-        var controller = parent.childControllers[indexOf - 1];
+        final controller = parent.childControllers[indexOf - 1];
         _index = controller.lastVisibleDescendatIndex + 1;
       } else {
         _index = parent.index + 1;
@@ -230,13 +229,13 @@ class NodeController {
     return _index + numberOfVisibleDescendants();
   }
 
-  int lastVisibleDescendantIndexForItem(dynamic item) {
+  int lastVisibleDescendantIndexForItem(NodeData item) {
     if (this.treeNode.item == item) {
       return this.lastVisibleDescendatIndex;
     }
 
-    for (NodeController nodeController in childControllers) {
-      int lastIndex = nodeController.lastVisibleDescendantIndexForItem(item);
+    for (final NodeController nodeController in childControllers) {
+      final int lastIndex = nodeController.lastVisibleDescendantIndexForItem(item);
       if (lastIndex != -1) {
         return lastIndex;
       }
@@ -256,9 +255,9 @@ class NodeController {
   }
 
   List<int> get descendantsIndexes {
-    int numberOfVisible = numberOfVisibleDescendants();
-    int startIndex = _index + 1;
-    List<int> indexes = [];
+    final int numberOfVisible = numberOfVisibleDescendants();
+    final int startIndex = _index + 1;
+    final List<int> indexes = [];
     for (int i = startIndex; i < startIndex + numberOfVisible; i++) {
       indexes.add(i);
     }
