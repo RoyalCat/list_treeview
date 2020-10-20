@@ -34,9 +34,9 @@ import 'tree_define.dart';
 class ListTreeView extends StatefulWidget {
   ListTreeView({
     @required this.itemBuilder,
+    @required this.controller,
     this.onTap,
     this.onLongPress,
-    this.controller,
     this.toggleNodeOnTap = true,
     this.shrinkWrap = false,
     this.removeTop = true,
@@ -46,8 +46,8 @@ class ListTreeView extends StatefulWidget {
   }) : assert(controller != null, "The TreeViewController can't be empty");
 
   final IndexedBuilder itemBuilder;
-  final PressCallback onLongPress;
   final TreeViewController controller;
+  final PressCallback onLongPress;
   final PressCallback onTap;
   final bool shrinkWrap;
   final bool removeBottom;
@@ -115,14 +115,12 @@ class _ListTreeViewState extends State<ListTreeView> {
 
               ///Your event is passed through the [Function] with the relevant data
               return InkWell(
-                onLongPress: () {
-                  widget.onLongPress(treeNode.item);
-                },
+                onLongPress: () => widget.onLongPress?.call(treeNode.item),
                 onTap: () {
                   if (widget.toggleNodeOnTap) {
                     itemClick(index);
                   }
-                  widget.onTap(treeNode.item);
+                  widget.onTap?.call(treeNode.item);
                 },
                 child: Container(
                   child: widget.itemBuilder(context, treeNode.item),

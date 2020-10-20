@@ -25,7 +25,7 @@ typedef WidgetBuilder = Widget Function(BuildContext context);
 typedef ExpandCallback = bool Function(NodeData item);
 typedef IndexedBuilder = Widget Function(BuildContext context, NodeData data);
 
-typedef PressCallback = Function(NodeData item);
+typedef PressCallback = void Function(NodeData item);
 
 class Constant {
   final int min = -1;
