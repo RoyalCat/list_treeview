@@ -20,7 +20,6 @@
 
 import 'package:flutter/material.dart';
 import 'controller/tree_controller.dart';
-import 'node/tree_node.dart';
 import 'tree_define.dart';
 
 /// ListTreeView based on ListView.
@@ -81,10 +80,8 @@ class _ListTreeViewState extends State<ListTreeView> {
   Widget build(BuildContext context) {
     if (widget.controller == null ||
         widget.controller.data == null ||
-        widget.controller.data.length == 0) {
-      return Center(
-        child: Text(''),
-      );
+        widget.controller.data.isEmpty) {
+      return Container();
     }
 
     return Container(
@@ -98,16 +95,15 @@ class _ListTreeViewState extends State<ListTreeView> {
             reverse: widget.reverse,
             shrinkWrap: widget.shrinkWrap,
             itemBuilder: (BuildContext context, int index) {
-//        int num = widget.controller.numberOfVisibleChild();
               ///The [TreeNode] associated with the current item
-              final TreeNode treeNode = widget.controller.treeNodeOfIndex(index);
+              final treeNode = widget.controller.treeNodeOfIndex(index);
 
               ///The level of the current item
               treeNode.item.level = widget.controller.levelOfNode(treeNode.item);
               treeNode.item.isExpand = widget.controller.isExpanded(treeNode.item);
               treeNode.item.index = index;
-              final NodeData parent = widget.controller.parentOfItem(treeNode.item);
-              if (parent != null && parent.children.length > 0) {
+              final parent = widget.controller.parentOfItem(treeNode.item);
+              if (parent != null && parent.children.isNotEmpty) {
                 treeNode.item.indexInParent = parent.children.indexOf(treeNode.item);
               } else {
                 treeNode.item.indexInParent = 0;

@@ -38,7 +38,7 @@ class NodeController {
   final ExpandCallback expandCallback;
 
   int _index;
-  List<NodeController> _mutableChildControllers;
+  final List<NodeController> _mutableChildControllers;
 
   int _level;
   int _numberOfVisibleChildren;
@@ -63,7 +63,7 @@ class NodeController {
     if (item == treeNode.item) {
       return this;
     }
-    for (final NodeController controller in childControllers) {
+    for (final controller in childControllers) {
       final result = controller.controllerOfItem(item);
       if (result != null) {
         return result;
@@ -74,7 +74,7 @@ class NodeController {
 
   ///
   void addChildController(List<NodeController> controllers) {
-    if (controllers == null || controllers.length == 0) {
+    if (controllers == null || controllers.isEmpty) {
       return;
     }
     _mutableChildControllers.addAll(controllers);
@@ -82,7 +82,7 @@ class NodeController {
   }
 
   void insertChildControllers(List<NodeController> controllers, List<int> indexes) {
-    if (controllers == null || controllers.length == 0) {
+    if (controllers == null || controllers.isEmpty) {
       return;
     }
     indexes.forEach((index) {
@@ -103,7 +103,7 @@ class NodeController {
 
   ///Remove
   void removeChildControllers(List<int> indexes) {
-    if (indexes.length == 0) {
+    if (indexes.isEmpty) {
       return;
     }
     indexes.forEach((index) {
@@ -129,12 +129,12 @@ class NodeController {
   }
 
   void resetChildNodesAfterChildAtIndex(int index) {
-    if (!treeNode.expanded) {
+    if (!treeNode.isExpanded) {
       return;
     }
 
-    for (int i = index + 1; i < childControllers.length; i++) {
-      final NodeController controller = childControllers[i];
+    for (var i = index + 1; i < childControllers.length; i++) {
+      final controller = childControllers[i];
       controller.resetData();
       controller.resetChildNodesAfterChildAtIndex(-1);
     }
@@ -143,16 +143,16 @@ class NodeController {
   /// Collapsing and expanding
 
   void expandAndExpandChildren(bool expandChildren) {
-    for (final NodeController controller in childControllers) {
+    for (final controller in childControllers) {
       controller.resetData();
     }
 
-    treeNode.setExpanded = true;
+    treeNode.isExpanded = true;
     resetData();
 
     /// Recursively expand all child nodes
-    for (final NodeController controller in childControllers) {
-      if (controller.treeNode.expanded || expandChildren) {
+    for (final controller in childControllers) {
+      if (controller.treeNode.isExpanded || expandChildren) {
         controller.expandAndExpandChildren(expandChildren);
       }
     }
@@ -162,12 +162,12 @@ class NodeController {
 
   ///collapse
   void collapseAndCollapseChildren(bool collapseChildren) {
-    treeNode.setExpanded = false;
+    treeNode.isExpanded = false;
     resetData();
 
     ///collapse children
     if (collapseChildren) {
-      for (final NodeController controller in childControllers) {
+      for (final controller in childControllers) {
         controller.collapseAndCollapseChildren(collapseChildren);
       }
     }
@@ -176,9 +176,9 @@ class NodeController {
 
   /// Collapsing and expanding - end
   int numberOfVisibleDescendants() {
-    if (this.treeNode != null && this.treeNode.expanded) {
-      int sum = this.childControllers.length;
-      this.childControllers.forEach((item) {
+    if (treeNode != null && treeNode.isExpanded) {
+      var sum = childControllers.length;
+      childControllers.forEach((item) {
         sum += item.numberOfVisibleDescendants();
       });
       _numberOfVisibleChildren = sum;
@@ -193,10 +193,10 @@ class NodeController {
       return this;
     }
 
-    if (!treeNode.expanded) {
+    if (!treeNode.isExpanded) {
       return null;
     }
-    for (final NodeController controller in childControllers) {
+    for (final controller in childControllers) {
       final result = controller.controllerForIndex(index);
       if (result != null) {
         return result;
@@ -211,7 +211,7 @@ class NodeController {
     }
     if (parent == null) {
       _index = -1;
-    } else if (!parent.treeNode.expanded) {
+    } else if (!parent.treeNode.isExpanded) {
       _index = -1;
     } else {
       final indexOf = parent.childControllers.indexOf(this);
@@ -230,12 +230,12 @@ class NodeController {
   }
 
   int lastVisibleDescendantIndexForItem(NodeData item) {
-    if (this.treeNode.item == item) {
-      return this.lastVisibleDescendatIndex;
+    if (treeNode.item == item) {
+      return lastVisibleDescendatIndex;
     }
 
-    for (final NodeController nodeController in childControllers) {
-      final int lastIndex = nodeController.lastVisibleDescendantIndexForItem(item);
+    for (final nodeController in childControllers) {
+      final lastIndex = nodeController.lastVisibleDescendantIndexForItem(item);
       if (lastIndex != -1) {
         return lastIndex;
       }
@@ -255,10 +255,10 @@ class NodeController {
   }
 
   List<int> get descendantsIndexes {
-    final int numberOfVisible = numberOfVisibleDescendants();
-    final int startIndex = _index + 1;
-    final List<int> indexes = [];
-    for (int i = startIndex; i < startIndex + numberOfVisible; i++) {
+    final numberOfVisible = numberOfVisibleDescendants();
+    final startIndex = _index + 1;
+    final indexes = <int>[];
+    for (var i = startIndex; i < startIndex + numberOfVisible; i++) {
       indexes.add(i);
     }
     return indexes;

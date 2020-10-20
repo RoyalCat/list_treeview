@@ -17,33 +17,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+import 'package:meta/meta.dart';
+
 import '../../list_treeview.dart';
 import '../tree_define.dart';
 
 class TreeNode {
-  TreeNode({this.lazyItem, this.expandCallback});
+  TreeNode({
+    TreeNodeItem lazyItem,
+    @required this.expandCallback,
+  }) : _lazyItem = lazyItem;
 
   bool _expanded = false;
   ExpandCallback expandCallback;
 
-  final TreeNodeItem lazyItem;
+  final TreeNodeItem _lazyItem;
 
-  NodeData get item {
-    if (lazyItem != null) {
-      return lazyItem.item;
-    }
-    return null;
-  }
+  NodeData get item => _lazyItem?.item;
 
+  @Deprecated('Use `isExpanded` instead.')
   bool get expanded {
     if (expandCallback != null) {
-      _expanded = expandCallback(this.item);
+      _expanded = expandCallback(item);
     }
     return _expanded;
   }
 
+  bool get isExpanded {
+    if (expandCallback != null) {
+      _expanded = expandCallback(item);
+    }
+    return _expanded;
+  }
+
+  @Deprecated('Use `isExpanded` setter instead.')
   set setExpanded(bool expanded) {
-    this.expandCallback = null;
+    expandCallback = null;
+    _expanded = expanded;
+  }
+
+  set isExpanded(bool expanded) {
+    expandCallback = null;
     _expanded = expanded;
   }
 }
@@ -57,16 +71,14 @@ class TreeNodeItem {
   NodeData _item;
 
   NodeData get item {
-    if (_item == null) {
-      _item = controller.dataForTreeNode(this);
-    }
+    _item ??= controller.dataForTreeNode(this);
     return _item;
   }
 }
 
 ///This class contains information about the nodes, such as Index and level, and whether to expand. It also contains other information
 abstract class NodeData {
-  NodeData({List<NodeData> children}) : this.children = children ?? const <NodeData>[];
+  NodeData({List<NodeData> children}) : children = children ?? const <NodeData>[];
 
   List<NodeData> children;
   bool isSelected = false;

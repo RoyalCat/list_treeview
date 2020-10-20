@@ -79,7 +79,7 @@ class TreePage extends StatefulWidget {
 class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin {
   TreeViewController _controller;
   bool _isSuccess;
-  List<Color> _colors = [];
+  final List<Color> _colors = [];
   @override
   void initState() {
     super.initState();
@@ -87,7 +87,7 @@ class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin
     ///The controller must be initialized when the treeView create
     _controller = TreeViewController();
 
-    for (int i = 0; i < 100; i++) {
+    for (var i = 0; i < 100; i++) {
       if (randomColor() != null) {
         _colors.add(randomColor());
       }
@@ -138,9 +138,9 @@ class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin
   }
 
   Color randomColor() {
-    final int r = Random.secure().nextInt(200);
-    final int g = Random.secure().nextInt(200);
-    final int b = Random.secure().nextInt(200);
+    final r = Random.secure().nextInt(200);
+    final g = Random.secure().nextInt(200);
+    final b = Random.secure().nextInt(200);
     return Color.fromARGB(255, r, g, b);
   }
 
@@ -149,9 +149,9 @@ class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin
     /// create New node
 //    DateTime time = DateTime.now();
 //    int milliseconds = time.millisecondsSinceEpoch ~/ 1000;
-    final int r = Random.secure().nextInt(255);
-    final int g = Random.secure().nextInt(255);
-    final int b = Random.secure().nextInt(255);
+    final r = Random.secure().nextInt(255);
+    final g = Random.secure().nextInt(255);
+    final b = Random.secure().nextInt(255);
 
     final newNode = TreeNodeData(label: 'rgb($r,$g,$b)', color: Color.fromARGB(255, r, g, b));
 
@@ -193,9 +193,8 @@ class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin
       shrinkWrap: false,
       padding: EdgeInsets.all(0),
       itemBuilder: (BuildContext context, NodeData data) {
-        final TreeNodeData item = data as TreeNodeData;
-//              double width = MediaQuery.of(context).size.width;
-        final double offsetX = item.level * 16.0;
+        final item = data as TreeNodeData;
+        final offsetX = item.level * 16.0;
         return Container(
           height: 54,
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -239,10 +238,6 @@ class _TreePageState extends State<TreePage> with SingleTickerProviderStateMixin
                       SizedBox(
                         width: 10,
                       ),
-//                          Text(
-//                            '${item.label}',
-//                            style: TextStyle(color: item.color),
-//                          ),
                     ],
                   ),
                 ),
