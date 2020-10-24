@@ -20,7 +20,6 @@
 import 'package:meta/meta.dart';
 
 import '../../list_treeview.dart';
-import '../tree_define.dart';
 
 class TreeNode {
   TreeNode({
@@ -29,31 +28,17 @@ class TreeNode {
   }) : _lazyItem = lazyItem;
 
   bool _expanded = false;
-  ExpandCallback expandCallback;
+  bool Function(NodeData item) expandCallback;
 
   final TreeNodeItem _lazyItem;
 
   NodeData get item => _lazyItem?.item;
-
-  @Deprecated('Use `isExpanded` instead.')
-  bool get expanded {
-    if (expandCallback != null) {
-      _expanded = expandCallback(item);
-    }
-    return _expanded;
-  }
 
   bool get isExpanded {
     if (expandCallback != null) {
       _expanded = expandCallback(item);
     }
     return _expanded;
-  }
-
-  @Deprecated('Use `isExpanded` setter instead.')
-  set setExpanded(bool expanded) {
-    expandCallback = null;
-    _expanded = expanded;
   }
 
   set isExpanded(bool expanded) {
@@ -77,25 +62,49 @@ class TreeNodeItem {
 }
 
 ///This class contains information about the nodes, such as Index and level, and whether to expand. It also contains other information
-abstract class NodeData {
-  NodeData({List<NodeData> children}) : children = children ?? const <NodeData>[];
+class NodeData<T> {
+  NodeData.raw(this.data, this.children, this.isSelected, this.index, this.indexInParent,
+      this.level, this.isExpand);
+  NodeData.fromData({this.data, List<NodeData<dynamic>> children})
+      : children = children ?? <NodeData>[];
 
-  List<NodeData> children;
+  T data;
+
+  List<NodeData<dynamic>> children;
   bool isSelected = false;
 
   /// Index in all nodes
-  int index = -1;
+  int index;
 
   /// Index in parent node
-  int indexInParent = -1;
-  int level = -1;
+  int indexInParent;
+  int level;
   bool isExpand = false;
 
-  void addChild(NodeData child) {
+  void addChild(NodeData<dynamic> child) {
     children.add(child);
   }
 
-  void addChildren(List<NodeData> child) {
+  void addChildren(List<NodeData<dynamic>> child) {
     children.addAll(child);
   }
+
+  NodeData copyWith({
+    T data,
+    List<NodeData<dynamic>> children,
+    bool isSelected,
+    int index,
+    int indexInParent,
+    int level,
+    bool isExpand,
+  }) =>
+      NodeData<T>.raw(
+        data ?? this.data,
+        children ?? this.children,
+        isSelected ?? this.isSelected,
+        index ?? this.index,
+        indexInParent ?? this.indexInParent,
+        level ?? this.level,
+        isExpand ?? this.isExpand,
+      );
 }

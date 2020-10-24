@@ -28,10 +28,10 @@ class TreeViewController extends ChangeNotifier {
 
   NodeController _rootController;
 
-  NodeData rootNodeData;
-  List<NodeData> data;
+  NodeData<dynamic> rootNodeData;
+  List<NodeData<dynamic>> data;
 
-  void treeData(List<NodeData> data) {
+  void treeData(List<NodeData<dynamic>> data) {
     assert(data != null, 'The data should not be empty');
     this.data = data;
     notifyListeners();
@@ -123,8 +123,8 @@ class TreeViewController extends ChangeNotifier {
       }
       final currentChildControllers = createNodeController(controller, indexes);
       final childControllersToInsert = <NodeController>[];
-      final indexesForInsertions = <int>[];
       final childControllersToRemove = <NodeController>[];
+      final indexesForInsertions = <int>[];
       final indexesForDeletions = <int>[];
       for (final loopNodeController in currentChildControllers) {
         if (!controller.childControllers.contains(loopNodeController) &&

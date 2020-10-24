@@ -19,15 +19,15 @@
 // THE SOFTWARE.
 
 import 'package:flutter/material.dart';
+import 'package:list_treeview/list_treeview.dart';
 import 'controller/tree_controller.dart';
-import 'tree_define.dart';
 
 /// ListTreeView based on ListView.
 /// [ListView] is the most commonly used scrolling widget. It displays its
 /// children one after another in the scroll direction. In the cross axis, the
 /// children are required to fill the [ListView].
 
-/// The default constructor takes takes an [IndexedBuilder] of children.which
+/// The default constructor takes an [IndexedBuilder] of children.which
 /// builds the children on demand.
 
 class ListTreeView extends StatefulWidget {
@@ -44,10 +44,10 @@ class ListTreeView extends StatefulWidget {
     this.padding = const EdgeInsets.all(0),
   }) : assert(controller != null, "The TreeViewController can't be empty");
 
-  final IndexedBuilder itemBuilder;
+  final Widget Function(BuildContext context, NodeData node) itemBuilder;
   final TreeViewController controller;
-  final PressCallback onLongPress;
-  final PressCallback onTap;
+  final void Function(NodeData item) onLongPress;
+  final void Function(NodeData item) onTap;
   final bool shrinkWrap;
   final bool removeBottom;
   final bool removeTop;
@@ -85,46 +85,42 @@ class _ListTreeViewState extends State<ListTreeView> {
     }
 
     return Container(
-      child: MediaQuery.removePadding(
-          removeBottom: widget.removeBottom,
-          removeTop: widget.removeTop,
-          context: context,
-          child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-            padding: widget.padding,
-            reverse: widget.reverse,
-            shrinkWrap: widget.shrinkWrap,
-            itemBuilder: (BuildContext context, int index) {
-              ///The [TreeNode] associated with the current item
-              final treeNode = widget.controller.treeNodeOfIndex(index);
+      child: ListView.builder(
+        physics: BouncingScrollPhysics(),
+        padding: widget.padding,
+        reverse: widget.reverse,
+        shrinkWrap: widget.shrinkWrap,
+        itemBuilder: (BuildContext context, int index) {
+          ///The [TreeNode] associated with the current item
+          final treeNode = widget.controller.treeNodeOfIndex(index);
 
-              ///The level of the current item
-              treeNode.item.level = widget.controller.levelOfNode(treeNode.item);
-              treeNode.item.isExpand = widget.controller.isExpanded(treeNode.item);
-              treeNode.item.index = index;
-              final parent = widget.controller.parentOfItem(treeNode.item);
-              if (parent != null && parent.children.isNotEmpty) {
-                treeNode.item.indexInParent = parent.children.indexOf(treeNode.item);
-              } else {
-                treeNode.item.indexInParent = 0;
+          ///The level of the current item
+          treeNode.item.level = widget.controller.levelOfNode(treeNode.item);
+          treeNode.item.isExpand = widget.controller.isExpanded(treeNode.item);
+          treeNode.item.index = index;
+          final parent = widget.controller.parentOfItem(treeNode.item);
+          if (parent != null && parent.children.isNotEmpty) {
+            treeNode.item.indexInParent = parent.children.indexOf(treeNode.item);
+          } else {
+            treeNode.item.indexInParent = 0;
+          }
+
+          ///Your event is passed through the [Function] with the relevant data
+          return InkWell(
+            onLongPress: () => widget.onLongPress?.call(treeNode.item),
+            onTap: () {
+              if (widget.toggleNodeOnTap) {
+                itemClick(index);
               }
-
-              ///Your event is passed through the [Function] with the relevant data
-              return InkWell(
-                onLongPress: () => widget.onLongPress?.call(treeNode.item),
-                onTap: () {
-                  if (widget.toggleNodeOnTap) {
-                    itemClick(index);
-                  }
-                  widget.onTap?.call(treeNode.item);
-                },
-                child: Container(
-                  child: widget.itemBuilder(context, treeNode.item),
-                ),
-              );
+              widget.onTap?.call(treeNode.item);
             },
-            itemCount: widget.controller.numberOfVisibleChild(),
-          )),
+            child: Container(
+              child: widget.itemBuilder(context, treeNode.item),
+            ),
+          );
+        },
+        itemCount: widget.controller.numberOfVisibleChild(),
+      ),
     );
   }
 }

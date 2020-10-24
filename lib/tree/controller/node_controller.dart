@@ -17,7 +17,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-import '../tree_define.dart';
 import '../node/tree_node.dart';
 
 ///
@@ -35,7 +34,7 @@ class NodeController {
   final TreeNodeItem nodeItem;
   final TreeNode treeNode;
 
-  final ExpandCallback expandCallback;
+  final bool Function(NodeData item) expandCallback;
 
   int _index;
   final List<NodeController> _mutableChildControllers;
